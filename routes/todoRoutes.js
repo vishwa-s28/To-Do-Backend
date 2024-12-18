@@ -46,6 +46,20 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Delete all todos
+router.delete("/all", async (req, res) => {
+  try {
+    const result = await pool.query("DELETE FROM todo RETURNING *");
+    if (result.rows.length === 0) {
+      return res.status(404).send("No todos found to delete.");
+    }
+    res.json({ message: "All todos deleted", todos: result.rows });
+  } catch (err) {
+    console.error("Error deleting todos:", err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 // Delete a todo
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
